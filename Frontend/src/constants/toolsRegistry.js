@@ -20,6 +20,7 @@ export const TOOLS = [
     icon: 'CircleOff',
     example: { input: '123.456.789', output: '123456789' },
     operations: [{ id: 'remove-dot', label: 'Remove Dot', fn: removeDot }],
+    favorite: true,
   },
   {
     id: 'remove-spaces',
@@ -84,9 +85,16 @@ export const TOOLS = [
     example: { input: '2 m × 1.5 ft × 3 pcs', output: '2.74 m²' },
     custom: true,
     path: '/tools/quantity-conversion',
+    favorite: true,
   },
 ]
 
+export const FAVORITE_TOOLS = TOOLS.filter((tool) => tool.favorite)
+
 export function getToolById(id) {
   return TOOLS.find((tool) => tool.id === id)
+}
+
+export function getToolPath(tool) {
+  return tool.custom ? tool.path : `/tools/${tool.id}`
 }

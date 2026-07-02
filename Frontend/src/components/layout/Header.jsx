@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import * as Icons from 'lucide-react'
 import { Package, Moon, Sun, History, Settings, Search, Menu } from 'lucide-react'
 import { useThemeStore } from '../../store/useThemeStore'
-import { TOOLS } from '../../constants/toolsRegistry'
+import { TOOLS, FAVORITE_TOOLS, getToolPath } from '../../constants/toolsRegistry'
 import { IconButton } from '../ui/IconButton'
 
 export function Header({ onMenuClick }) {
@@ -14,9 +15,9 @@ export function Header({ onMenuClick }) {
     ? TOOLS.filter((tool) => tool.name.toLowerCase().includes(query.trim().toLowerCase()))
     : []
 
-  function goToTool(id) {
+  function goToTool(tool) {
     setQuery('')
-    navigate(`/tools/${id}`)
+    navigate(getToolPath(tool))
   }
 
   return (
@@ -44,7 +45,7 @@ export function Header({ onMenuClick }) {
             {results.map((tool) => (
               <li key={tool.id}>
                 <button
-                  onClick={() => goToTool(tool.id)}
+                  onClick={() => goToTool(tool)}
                   className="w-full text-left px-3 py-2 text-sm text-text hover:bg-card cursor-pointer"
                 >
                   {tool.name}
@@ -56,6 +57,23 @@ export function Header({ onMenuClick }) {
       </div>
 
       <div className="flex items-center gap-1 justify-end">
+        <div className="hidden sm:flex items-center gap-1 mr-1 pr-2 border-r border-border">
+          {FAVORITE_TOOLS.map((tool) => {
+            const Icon = Icons[tool.icon] || Icons.Wrench
+            return (
+              <button
+                key={tool.id}
+                type="button"
+                title={tool.name}
+                onClick={() => navigate(getToolPath(tool))}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/10 px-2.5 py-1.5 text-xs font-medium text-text hover:bg-warning/20 transition-colors cursor-pointer"
+              >
+                <Icon size={14} className="text-warning" />
+                <span className="hidden lg:inline">{tool.name}</span>
+              </button>
+            )
+          })}
+        </div>
         <IconButton label="Toggle theme" onClick={toggleTheme}>
           {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
         </IconButton>

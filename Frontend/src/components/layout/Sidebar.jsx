@@ -1,11 +1,18 @@
 import { NavLink } from 'react-router-dom'
 import * as Icons from 'lucide-react'
-import { LayoutDashboard, History, Settings, Wrench } from 'lucide-react'
-import { TOOLS } from '../../constants/toolsRegistry'
+import { LayoutDashboard, History, Settings, Wrench, Star } from 'lucide-react'
+import { TOOLS, FAVORITE_TOOLS, getToolPath } from '../../constants/toolsRegistry'
 
 const linkClass = ({ isActive }) =>
   `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
     isActive ? 'bg-primary text-white' : 'text-text-muted hover:bg-card hover:text-text'
+  }`
+
+const favoriteLinkClass = ({ isActive }) =>
+  `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+    isActive
+      ? 'bg-primary text-white border-primary'
+      : 'bg-warning/10 border-warning/30 text-text hover:bg-warning/20'
   }`
 
 const CATEGORY_ORDER = [...new Set(TOOLS.map((tool) => tool.category))]
@@ -23,6 +30,20 @@ export function Sidebar({ open, onNavigate }) {
           Dashboard
         </NavLink>
 
+        <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wide text-text-muted flex items-center gap-2">
+          <Star size={12} /> Favorites
+        </p>
+        {FAVORITE_TOOLS.map((tool) => {
+          const Icon = Icons[tool.icon] || Icons.Wrench
+          return (
+            <NavLink key={tool.id} to={getToolPath(tool)} className={favoriteLinkClass} onClick={onNavigate}>
+              <Icon size={18} />
+              {tool.name}
+              <Star size={14} className="ml-auto text-warning fill-warning" />
+            </NavLink>
+          )
+        })}
+
         {CATEGORY_ORDER.map((category) => (
           <div key={category}>
             <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wide text-text-muted flex items-center gap-2">
@@ -31,12 +52,7 @@ export function Sidebar({ open, onNavigate }) {
             {TOOLS.filter((tool) => tool.category === category).map((tool) => {
               const Icon = Icons[tool.icon] || Icons.Wrench
               return (
-                <NavLink
-                  key={tool.id}
-                  to={tool.custom ? tool.path : `/tools/${tool.id}`}
-                  className={linkClass}
-                  onClick={onNavigate}
-                >
+                <NavLink key={tool.id} to={getToolPath(tool)} className={linkClass} onClick={onNavigate}>
                   <Icon size={18} />
                   {tool.name}
                 </NavLink>

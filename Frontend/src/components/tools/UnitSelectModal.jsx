@@ -16,13 +16,16 @@ export function UnitSelectModal({ open, title, value, units, onSelect, onCancel 
   // Kept current via refs (rather than effect deps) so the keydown listener below
   // is attached once per open and never torn down/re-attached between keystrokes.
   const activeIndexRef = useRef(activeIndex)
-  activeIndexRef.current = activeIndex
   const unitsRef = useRef(units)
-  unitsRef.current = units
   const onSelectRef = useRef(onSelect)
-  onSelectRef.current = onSelect
   const onCancelRef = useRef(onCancel)
-  onCancelRef.current = onCancel
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex
+    unitsRef.current = units
+    onSelectRef.current = onSelect
+    onCancelRef.current = onCancel
+  }, [activeIndex, units, onSelect, onCancel])
 
   useEffect(() => {
     if (!open) return
